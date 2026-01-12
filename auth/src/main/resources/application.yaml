@@ -1,0 +1,49 @@
+server:
+  port: 7771
+spring:
+  application:
+    name: auth-service
+  webclient:
+    proxy:
+      host: 127.0.0.1
+      port: 7890
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Ov23liLCgUjCzq7TCSNp
+            client-secret: a17cfecd805ed875db4e3179f4cb03ec4c6b4a36
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - read:user
+              - user:email
+        provider:
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
+            user-name-attribute: id
+
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/auth?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 123456
+  ldap:
+    urls: ldap://192.168.127.128:389
+    base: dc=example,dc=com
+    username: cn=admin,dc=example,dc=com
+    password: admin
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.127.128:8848
+        namespace: aeceb76a-8c30-4852-ad41-c548062b61d2
+        cluster-name: guangzhou
+mybatis:
+  mapper-locations: classpath:mapper/*.xml # XML映射文件路径
+  type-aliases-package: com.lhb.auth.pojo    # 实体类包别名
+  configuration:
+    map-underscore-to-camel-case: true

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lhb.auth.mapper.LDAPUserMapper">
+
+    <!-- 根据 LDAP username 查询本地用户 -->
+    <select id="findByUsername" resultType="com.lhb.auth.pojo.DO.LDAPUserDO" parameterType="string">
+        SELECT id, username, name, password, email, role
+        FROM ldap_user
+        WHERE username = #{username}
+    </select>
+
+    <!-- 插入新用户 -->
+    <insert id="insert" parameterType="com.lhb.auth.pojo.DO.LDAPUserDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ldap_user (username, name, password,email,role)
+        VALUES (#{username}, #{name}, #{password}, #{email}, #{role})
+    </insert>
+
+</mapper>

@@ -1,0 +1,37 @@
+server:
+  port: 7573
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: http://localhost:7771      # 静态路由到用户服务
+          predicates:
+            - Path=/auth/**               # 匹配 /user/** 的请求
+          filters:
+            - StripPrefix=1               # 去掉 /user 前缀
+        - id: product-service
+          uri: http://localhost:7773      # 静态路由到订单服务
+          predicates:
+            - Path=/product/**
+    nacos:
+      discovery:
+        server-addr: 192.168.127.128:8848
+        namespace: aeceb76a-8c30-4852-ad41-c548062b61d2
+        cluster-name: guangzhou
+
+
+
+
+gateway:
+  whitelist:
+    - /auth/**
+
+
+
+
