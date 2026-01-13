@@ -1,0 +1,31 @@
+# 创建组织单位 users
+dn: ou=users,dc=example,dc=com
+objectClass: organizationalUnit
+ou: users
+
+# LDAP 普通用户
+dn: uid=ldap_user_1,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+uid: ldap_user_1
+cn: LDAPUser1
+sn: User
+mail: ldap_user_1@example.com
+userPassword: 123456
+
+# LDAP 编辑员
+dn: uid=ldap_editor_1,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+uid: ldap_editor_1
+cn: LDAPEditor1
+sn: User
+mail: ldap_editor_1@example.com
+userPassword: 123456
+
+# LDAP 管理员
+dn: uid=ldap_adm_1,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+uid: ldap_adm_1
+cn: LDAPAdmin1
+sn: User
+mail: ldap_adm_1@example.com
+userPassword: 123456

@@ -1,0 +1,24 @@
+server:
+  port: 7773
+
+spring:
+  application:
+    name: product-service
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://product-mysql:3306/product?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&characterEncoding=utf8&useUnicode=true
+    username: root
+    password: 123456
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos:8848
+        # 单机新 Nacos 默认 public namespace
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.lhb.product.pojo
+  configuration:
+    map-underscore-to-camel-case: true

@@ -8,4 +8,4 @@ WORKDIR /product
 COPY product-0.0.1-SNAPSHOT.jar product.jar
 
 # 容器启动命令
-ENTRYPOINT ["java","-jar","product.jar"]
+ENTRYPOINT ["java","-jar","product.jar", "--spring.profiles.active=docker"]

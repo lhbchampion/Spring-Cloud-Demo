@@ -8,4 +8,4 @@ WORKDIR /gateway
 COPY gateway-0.0.1-SNAPSHOT.jar gateway.jar
 
 # 容器启动命令
-ENTRYPOINT ["java","-jar","gateway.jar"]
+ENTRYPOINT ["java","-jar","gateway.jar", "--spring.profiles.active=docker"]

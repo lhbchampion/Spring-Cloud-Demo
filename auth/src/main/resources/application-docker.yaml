@@ -1,0 +1,48 @@
+server:
+  port: 7771
+
+spring:
+  application:
+    name: auth-service
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Ov23liLCgUjCzq7TCSNp
+            client-secret: a17cfecd805ed875db4e3179f4cb03ec4c6b4a36
+            redirect-uri: "http://localhost:7771/login/oauth2/code/{registrationId}"
+            scope:
+              - read:user
+              - user:email
+        provider:
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
+            user-name-attribute: id
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://auth-mysql:3306/auth?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&characterEncoding=utf8&useUnicode=true
+    username: root
+    password: 123456
+
+  ldap:
+    urls: ldap://ldap:389
+    base: dc=example,dc=com
+    username: cn=admin,dc=example,dc=com
+    password: admin
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos:8848
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.lhb.auth.pojo
+  configuration:
+    map-underscore-to-camel-case: true

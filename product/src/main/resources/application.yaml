@@ -1,22 +1,3 @@
-server:
-  port: 7773
-
 spring:
-  application:
-    name: product-service
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://localhost:3306/product?useSSL=false&serverTimezone=UTC
-    username: root
-    password: 123456
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 192.168.127.128:8848
-        namespace: aeceb76a-8c30-4852-ad41-c548062b61d2
-        cluster-name: guangzhou
-mybatis:
-  mapper-locations: classpath:mapper/*.xml # XML映射文件路径
-  type-aliases-package: com.lhb.project.pojo    # 实体类包别名
-  configuration:
-    map-underscore-to-camel-case: true
+  profiles:
+    active: local

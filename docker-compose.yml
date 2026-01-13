@@ -1,0 +1,126 @@
+services:
+
+  # 1️⃣ MySQL for auth
+  auth-mysql:
+    image: mysql:8.0
+    container_name: auth-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: auth
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_general_ci
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./sql/auth.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      retries: 5
+      start_period: 20s
+
+  # 2️⃣ MySQL for product
+  product-mysql:
+    image: mysql:8.0
+    container_name: product-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: product
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_general_ci
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./sql/product.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      retries: 5
+      start_period: 20s
+
+  # 3️⃣ Nacos 服务
+  nacos:
+    image: nacos/nacos-server:v2.1.0
+    container_name: nacos
+    environment:
+      MODE: standalone
+      NACOS_AUTH_ENABLE: "false"
+    ports:
+      - "8848:8848"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/v1/ns/operator/servers"]
+      interval: 5s
+      retries: 5
+      start_period: 30s
+
+  # 4️⃣ LDAP 服务
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: ldap
+    environment:
+      LDAP_ORGANISATION: "Example Inc"
+      LDAP_DOMAIN: "example.com"
+      LDAP_ADMIN_PASSWORD: admin
+    ports:
+      - "389:389"
+      - "636:636"
+    healthcheck:
+      test: [ "CMD", "ldapsearch", "-x", "-H", "ldap://localhost:389", "-s", "base" ]
+      interval: 5s
+      retries: 5
+
+
+
+  # 5️⃣ Auth 服务
+  auth:
+    build: ./auth
+    container_name: auth
+    ports:
+      - "7771:7771"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://auth-mysql:3306/auth?useSSL=false&serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_CLOUD_NACOS_DISCOVERY_SERVER-ADDR: nacos:8848
+      SPRING_LDAP_URLS: ldap://ldap:389
+    depends_on:
+      auth-mysql:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      ldap:
+        condition: service_healthy
+
+  # 6️⃣ Product 服务
+  product:
+    build: ./product
+    container_name: product
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://product-mysql:3306/product?useSSL=false&serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_CLOUD_NACOS_DISCOVERY_SERVER-ADDR: nacos:8848
+    depends_on:
+      product-mysql:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+
+  # 7️⃣ Gateway 服务
+  gateway:
+    build: ./gateway
+    container_name: gateway
+    ports:
+      - "7573:7573"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_NACOS_DISCOVERY_SERVER-ADDR: nacos:8848
+    depends_on:
+      auth:
+        condition: service_started
+      product:
+        condition: service_started
+      nacos:
+        condition: service_healthy
