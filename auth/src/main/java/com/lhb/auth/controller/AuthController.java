@@ -48,70 +48,42 @@ public class AuthController {
     }
 
 
-    /**
-     * github登录成功回调地址
-     * @param principal
-     * @return
-     */
-    @GetMapping("/loginSuccess")
-    public ApiResponse<LoginResultVO> loginSuccess(@AuthenticationPrincipal OAuth2User principal) {
-        Number idNum = (Number) principal.getAttribute("id");
-        Long githubId = idNum.longValue();
+//    /**
+//     * github登录成功回调地址
+//     * @param principal
+//     * @return
+//     */
+//    @GetMapping("/loginSuccess")
+//    public ApiResponse<LoginResultVO> loginSuccess(@AuthenticationPrincipal OAuth2User principal) {
+//        Number idNum = (Number) principal.getAttribute("id");
+//        Long githubId = idNum.longValue();
+//
+//        GitHubUserDO user = gitHubUserMapper.findByGithubId(githubId);
+//        if (user == null) {
+//            user = new GitHubUserDO();
+//            user.setGithubId(githubId);
+//            user.setUsername(principal.getAttribute("login"));
+//            user.setEmail(principal.getAttribute("email"));
+//            user.setRole("EDITOR");
+//            gitHubUserMapper.insert(user);
+//        }
+//
+//
+//
+//        // 生成 JWT
+//        String token = jwtUtil.generateToken(user.getId().toString(), buildClaims(user.getRole()));
+//
+//        return ApiResponse.success( LoginResultVO.builder()
+//                .userId(user.getId())
+//                .username(user.getUsername())
+//                .role(user.getRole())
+//                .loginType(StrategyEnum.GITHUB.name())
+//                .accessToken(token)
+//                .expiresIn(jwtUtil.getExpireSeconds())
+//                .build());
+//    }
 
-        GitHubUserDO user = gitHubUserMapper.findByGithubId(githubId);
-        if (user == null) {
-            user = new GitHubUserDO();
-            user.setGithubId(githubId);
-            user.setUsername(principal.getAttribute("login"));
-            user.setEmail(principal.getAttribute("email"));
-            user.setRole("EDITOR");
-            gitHubUserMapper.insert(user);
-        }
 
 
-
-        // 生成 JWT
-        String token = jwtUtil.generateToken(user.getId().toString(), buildClaims(user.getRole()));
-
-        return ApiResponse.success( LoginResultVO.builder()
-                .userId(user.getId())
-                .username(user.getUsername())
-                .role(user.getRole())
-                .loginType(StrategyEnum.GITHUB.name())
-                .accessToken(token)
-                .expiresIn(jwtUtil.getExpireSeconds())
-                .build());
-    }
-
-
-    /**
-     * 生成 JWT claims，处理角色继承
-     * @param role 用户角色: COMMON, EDITOR, ADMIN
-     * @return claims Map
-     */
-    public static Map<String, Object> buildClaims(String role) {
-        Set<String> roles = new HashSet<>();
-
-        switch (role.toUpperCase()) {
-            case "ADMIN":
-                roles.add("COMMON");
-                roles.add("EDITOR");
-                roles.add("ADMIN");
-                break;
-            case "EDITOR":
-                roles.add("COMMON");
-                roles.add("EDITOR");
-                break;
-            case "COMMON":
-                roles.add("COMMON");
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown role: " + role);
-        }
-
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", new ArrayList<>(roles)); // 放入 JWT
-        return claims;
-    }
 
 }
