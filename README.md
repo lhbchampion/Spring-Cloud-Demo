@@ -90,8 +90,14 @@ docker exec ldap ldapadd -x -D "cn=admin,dc=example,dc=com" -w admin -f /tmp/ini
             redirect-uri: "http://服务器ip:7771/login/oauth2/code/{registrationId}"
 并创建oauth2 app
 
+http://服务器ip:7771
+
+回调地址
+http://服务器ip:7771/login/oauth2/code/github
+
 
 4.若过程中遇到问题无法解决可联系微信号ruyiruyilhb
+
 
 
 
