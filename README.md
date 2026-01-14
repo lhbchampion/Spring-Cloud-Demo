@@ -84,7 +84,15 @@ docker-compose up -d
 docker cp H:\Spring-Cloud-Demo\ldap-data\ldap-data.ldif ldap:/tmp/init.ldif
 docker exec ldap ldapadd -x -D "cn=admin,dc=example,dc=com" -w admin -f /tmp/init.ldif
 2.请确保在docker-compose所在目录下执行命令，请确保项目名是Spring-Cloud-Demo
-3.若过程中遇到问题无法解决可联系微信号ruyiruyilhb,本人已全部测试了多遍过程
+3.GitHub登录需要修改auth下的配置文件application-docker.yaml
+            client-id: 你的
+            client-secret: 你的
+            redirect-uri: "http://服务器ip:7771/login/oauth2/code/{registrationId}"
+并创建oauth2 app
+
+
+4.若过程中遇到问题无法解决可联系微信号ruyiruyilhb
+
 
 
 
